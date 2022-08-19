@@ -68,8 +68,8 @@ namespace WinFormsApp1
 
         private void OnResizeEnd(object sender, EventArgs e)
         {
-            winDeskImg = GetDesktopImage();
-            SetTransBG();
+            if (!locChangedOff)
+                SetTransBG();
         }
 
         private void OnLocationChanged(object sender, EventArgs e)
