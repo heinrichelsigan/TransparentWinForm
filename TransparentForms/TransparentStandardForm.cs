@@ -1,14 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
-namespace WinFormsApp1
+namespace TransparentForms
 {
-    public partial class Form1 : Form
+    public partial class TransparentStandardForm : Form
     {
-        protected Image? winDeskImg = null;
+        protected Image winDeskImg = null;
         volatile bool locChangedOff = false;
 
-        public Form1()
+        public TransparentStandardForm()
         {
             InitializeComponent();
         }
@@ -18,18 +27,18 @@ namespace WinFormsApp1
         {
             if (winDeskImg == null)
                 winDeskImg = GetDesktopImage();
-             
+
             Graphics g = Graphics.FromImage(winDeskImg);
             Form f = this.FindForm();
-            Image? bgImg = Crop(winDeskImg, DesktopBounds.Size.Width, DesktopBounds.Size.Height, f.DesktopBounds.Location.X + 8, f.DesktopBounds.Location.Y + 32);
+            Image bgImg = Crop(winDeskImg, DesktopBounds.Size.Width, DesktopBounds.Size.Height, f.DesktopBounds.Location.X + 8, f.DesktopBounds.Location.Y + 32);
             if (bgImg != null)
                 this.BackgroundImage = bgImg;
         }
 
-        public Image? Crop(Image image, int width, int height, int x, int y)
+        public Image Crop(Image image, int width, int height, int x, int y)
         {
             try
-            {                
+            {
                 Bitmap bmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
 
                 Graphics g = Graphics.FromImage(bmp);
@@ -77,6 +86,6 @@ namespace WinFormsApp1
             if (!locChangedOff)
                 SetTransBG();
         }
-    
+
     }
 }
