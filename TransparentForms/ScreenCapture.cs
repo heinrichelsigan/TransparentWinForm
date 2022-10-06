@@ -7,6 +7,10 @@ using System.Runtime.InteropServices;
 
 namespace TransparentForms
 {
+    /// <summary>
+    /// Heinrich Elsigan
+    /// GNU General Public License v3
+    /// </summary>
     public class ScreenCapture
     {
         /// <summary>

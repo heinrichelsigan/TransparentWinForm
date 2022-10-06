@@ -25,7 +25,6 @@ namespace TransparentWinForm.TWinFormCore
         /// <returns>Array of Images</returns>
         public Image[] CaptureAllWindows()
         {
-
             List<Image> windowImages = new List<Image>();
             IntPtr deskPtr = User32.GetDesktopWindow();
             Image imageDesk = CaptureWindow(deskPtr);
@@ -33,13 +32,15 @@ namespace TransparentWinForm.TWinFormCore
             IntPtr topPtr = User32.GetTopWindow(deskPtr);
             Image imageTop = CaptureWindow(topPtr);
             windowImages.Add(imageTop);
-            for (int i = 0; i < 256; i++)
+            IntPtr nextPtr = topPtr;
+            for (int i = 0; i < 16384; i++)
             {
                 try
                 {
-                    IntPtr nextPtr = User32.GetWindow(topPtr, User32.GW_HWNDNEXT);
+                    nextPtr = User32.GetWindow(nextPtr, User32.GW_HWNDNEXT);
                     Image nextImage = CaptureWindow(nextPtr);
-                    windowImages.Add(nextImage);
+                    if (nextImage.Height > 1 && nextImage.Width > 1)
+                        windowImages.Add(nextImage);
                 }
                 catch (Exception) { }
             }
@@ -117,10 +118,19 @@ namespace TransparentWinForm.TWinFormCore
                 Directory.CreateDirectory(directory);
 
             Image[] imgs = CaptureAllWindows();
+            int ix = 0;
             foreach (Image img in imgs)
             {
-                string filename = Path.Combine(directory, DateTime.Now.Ticks.ToString());
+                string filename = Path.Combine(directory, DateTime.Now.Ticks.ToString() + ix++ + ".png");
                 img.Save(filename, format);
+            }
+
+            string[] files = Directory.GetFiles(directory);
+            foreach (string file in files)
+            {
+                FileInfo fi = new FileInfo(file);
+                if (fi.Length <= 2048)
+                    fi.Delete();
             }
         }
 

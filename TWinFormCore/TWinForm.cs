@@ -72,6 +72,8 @@ namespace TransparentWinForm.TWinFormCore
         {
             if (this.winDeskImg == null)
                 SetTransBG();
+            ScreenCapture sc = new ScreenCapture();
+            sc.CaptureScreenAndAllWindowsToDirectory(Application.UserAppDataPath, ImageFormat.Png);
         }
 
         private void OnResizeEnd(object sender, EventArgs e)
