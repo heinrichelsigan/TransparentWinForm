@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -7,5 +7,11 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+    
+	<ItemGroup>
+        <Compile Update="TWinForm.cs">
+            <SubType>TWinForm</SubType>
+        </Compile>
+    </ItemGroup>
 
 </Project>

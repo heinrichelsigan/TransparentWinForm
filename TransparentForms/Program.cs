@@ -9,14 +9,14 @@ namespace TransparentForms
     internal static class Program
     {
         /// <summary>
-        /// Der Haupteinstiegspunkt für die Anwendung.
+        /// main entry point for classic .NET 4.8.x
         /// </summary>
         [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new TransparentStandardForm());
+            Application.Run(new TForm());
         }
     }
 }

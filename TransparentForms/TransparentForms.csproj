@@ -47,11 +47,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ScreenCapture.cs" />
-    <Compile Include="TransparentStandardForm.cs">
+    <Compile Include="TForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TransparentStandardForm.Designer.cs">
-      <DependentUpon>TransparentStandardForm.cs</DependentUpon>
+    <Compile Include="TForm.Designer.cs">
+      <DependentUpon>TForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

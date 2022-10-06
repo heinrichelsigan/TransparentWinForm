@@ -1,16 +1,18 @@
-﻿namespace WinFormsApp1
+﻿using TransparentForms.Properties;
+
+namespace TransparentForms
 {
-    partial class Form1
+    partial class TForm
     {
         /// <summary>
-        ///  Required designer variable.
+        /// Erforderliche Designervariable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        ///  Clean up any resources being used.
+        /// Verwendete Ressourcen bereinigen.
         /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -20,28 +22,31 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+        #region Vom Windows Form-Designer generierter Code
 
         /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
+        /// Erforderliche Methode für die Designerunterstützung.
+        /// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
         /// </summary>
         private void InitializeComponent()
         {
             this.SuspendLayout();
             // 
-            // Form1
-            //             
+            // TForm
+            // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(624, 441);
             this.DoubleBuffered = true;
-            this.Name = "Form1";
+            this.Icon = global::TransparentForms.Properties.Resources.TransparentFormsIcon;
+            this.Name = "TForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Form1";
+            this.Text = "TransparentStandardForm";
             this.Load += new System.EventHandler(this.OnLoad);
             this.ResizeEnd += new System.EventHandler(this.OnResizeEnd);
             this.LocationChanged += new System.EventHandler(this.OnLocationChanged);
+            this.Enter += new System.EventHandler(this.OnLeave);
+            this.Leave += new System.EventHandler(this.OnLeave);
             this.ResumeLayout(false);
 
         }
@@ -49,3 +54,4 @@
         #endregion
     }
 }
+

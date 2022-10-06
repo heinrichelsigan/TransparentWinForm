@@ -1,16 +1,16 @@
-﻿namespace TransparentForms
+﻿namespace TransparentWinForm.TWinFormCore
 {
-    partial class TransparentStandardForm
+    partial class TWinForm
     {
         /// <summary>
-        /// Erforderliche Designervariable.
+        ///  Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        /// Verwendete Ressourcen bereinigen.
+        ///  Clean up any resources being used.
         /// </summary>
-        /// <param name="disposing">True, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -20,29 +20,35 @@
             base.Dispose(disposing);
         }
 
-        #region Vom Windows Form-Designer generierter Code
+        #region Windows Form Designer generated code
 
         /// <summary>
-        /// Erforderliche Methode für die Designerunterstützung.
-        /// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
+        ///  Required method for Designer support - do not modify
+        ///  the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TWinForm));
+            this.SuspendLayout();
+            // 
+            // TWinForm
+            // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.ClientSize = new System.Drawing.Size(640, 480);
             this.DoubleBuffered = true;
-            this.Name = "TransparentStandardForm";
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("TransparentFormsIcon")));
+            this.Name = "TWinForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "TransparentStandardForm";
+            this.Text = "TWinFoirm";
             this.Load += new System.EventHandler(this.OnLoad);
             this.ResizeEnd += new System.EventHandler(this.OnResizeEnd);
             this.LocationChanged += new System.EventHandler(this.OnLocationChanged);
             this.ResumeLayout(false);
+
         }
 
         #endregion
     }
 }
-

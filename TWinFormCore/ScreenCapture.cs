@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WinFormsApp1
+namespace TransparentWinForm.TWinFormCore
 {
     public class ScreenCapture
     {
@@ -20,10 +20,38 @@ namespace WinFormsApp1
         }
 
         /// <summary>
+        /// Creates an Image object containing a screen shot of the entire desktop and child windows
+        /// </summary>
+        /// <returns>Array of Images</returns>
+        public Image[] CaptureAllWindows()
+        {
+
+            List<Image> windowImages = new List<Image>();
+            IntPtr deskPtr = User32.GetDesktopWindow();
+            Image imageDesk = CaptureWindow(deskPtr);
+            windowImages.Add(imageDesk);
+            IntPtr topPtr = User32.GetTopWindow(deskPtr);
+            Image imageTop = CaptureWindow(topPtr);
+            windowImages.Add(imageTop);
+            for (int i = 0; i < 256; i++)
+            {
+                try
+                {
+                    IntPtr nextPtr = User32.GetWindow(topPtr, User32.GW_HWNDNEXT);
+                    Image nextImage = CaptureWindow(nextPtr);
+                    windowImages.Add(nextImage);
+                }
+                catch (Exception) { }
+            }
+
+            return windowImages.ToArray();
+        }
+
+        /// <summary>
         /// Creates an Image object containing a screen shot of a specific window
         /// </summary>
         /// <param name="handle">The handle to the window. (In windows forms, this is obtained by the Handle property)</param>
-        /// <returns></returns>
+        /// <returns>Image</returns>
         public Image CaptureWindow(IntPtr handle)
         {
             // get te hDC of the target window
@@ -77,12 +105,32 @@ namespace WinFormsApp1
             img.Save(filename, format);
         }
 
+
+        /// <summary>
+        /// Captures a screen shot of the entire desktop and all child windows and saves it tó a directory
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <param name="format"></param>
+        public void CaptureScreenAndAllWindowsToDirectory(string directory, ImageFormat format)
+        {
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            Image[] imgs = CaptureAllWindows();
+            foreach (Image img in imgs)
+            {
+                string filename = Path.Combine(directory, DateTime.Now.Ticks.ToString());
+                img.Save(filename, format);
+            }
+        }
+
         /// <summary>
         /// Helper class containing Gdi32 API functions
         /// </summary>
         private class GDI32
         {
-            public const int SRCCOPY = 0x00CC0020; // BitBlt dwRop parameter
+            public const int SRCCOPY = 0x00CC0020; // BitBlt dwRop parameter            
+
             [DllImport("gdi32.dll")]
             public static extern bool BitBlt(IntPtr hObject, int nXDest, int nYDest,
                 int nWidth, int nHeight, IntPtr hObjectSource,
@@ -105,6 +153,14 @@ namespace WinFormsApp1
         /// </summary>
         private class User32
         {
+            public const uint GW_HWNDFIRST = 0x000;
+            public const uint GW_HWNDLAST = 0x001;
+            public const uint GW_HWNDNEXT = 0x002;
+            public const uint GW_HWNDPREV = 0x003;
+            public const uint GW_OWNER = 0x004;
+            public const uint GW_CHILD = 0x005;
+            public const uint GW_ENABLEDPOPUP = 0x006;
+
             [StructLayout(LayoutKind.Sequential)]
             public struct RECT
             {
@@ -121,6 +177,10 @@ namespace WinFormsApp1
             public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
             [DllImport("user32.dll")]
             public static extern IntPtr GetWindowRect(IntPtr hWnd, ref RECT rect);
+            [DllImport("user32.dll")]
+            public static extern IntPtr GetTopWindow(IntPtr hWnd);
+            [DllImport("user32.dll")]
+            public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
         }
 
     }

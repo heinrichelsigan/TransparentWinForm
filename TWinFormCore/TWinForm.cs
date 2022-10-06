@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace TransparentForms
+namespace TransparentWinForm.TWinFormCore
 {
-    public partial class TransparentStandardForm : Form
+    public partial class TWinForm : Form
     {
-        protected Image winDeskImg = null;
+        protected Image? winDeskImg = null;
         volatile bool locChangedOff = false;
+        object spinLock = new object();
+        DateTime lastCapture = DateTime.Now;
 
-        public TransparentStandardForm()
+        public TWinForm()
         {
             InitializeComponent();
         }
@@ -27,18 +20,18 @@ namespace TransparentForms
         {
             if (winDeskImg == null)
                 winDeskImg = GetDesktopImage();
-
+             
             Graphics g = Graphics.FromImage(winDeskImg);
             Form f = this.FindForm();
-            Image bgImg = Crop(winDeskImg, DesktopBounds.Size.Width, DesktopBounds.Size.Height, f.DesktopBounds.Location.X + 8, f.DesktopBounds.Location.Y + 32);
+            Image? bgImg = Crop(winDeskImg, DesktopBounds.Size.Width, DesktopBounds.Size.Height, f.DesktopBounds.Location.X + 8, f.DesktopBounds.Location.Y + 32);
             if (bgImg != null)
                 this.BackgroundImage = bgImg;
         }
 
-        public Image Crop(Image image, int width, int height, int x, int y)
+        public Image? Crop(Image image, int width, int height, int x, int y)
         {
             try
-            {
+            {                
                 Bitmap bmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
 
                 Graphics g = Graphics.FromImage(bmp);
@@ -61,12 +54,18 @@ namespace TransparentForms
         public Image GetDesktopImage()
         {
             locChangedOff = true;
-            this.WindowState = FormWindowState.Minimized;
-            ScreenCapture sc = new ScreenCapture();
-            Image winDeskImg = sc.CaptureScreen();
-            this.WindowState = FormWindowState.Normal;
-            locChangedOff = false;
-            return winDeskImg;
+            spinLock = new object();
+            Image winDesktopImg;
+            lock (spinLock)
+            {
+                this.WindowState = FormWindowState.Minimized;
+                ScreenCapture sc = new ScreenCapture();
+                winDesktopImg = sc.CaptureScreen();
+                this.WindowState = FormWindowState.Normal;
+                lastCapture = DateTime.Now;
+                locChangedOff = false;
+            }
+            return winDesktopImg;
         }
 
         private void OnLoad(object sender, EventArgs e)
@@ -79,6 +78,18 @@ namespace TransparentForms
         {
             if (!locChangedOff)
                 SetTransBG();
+            System.Timers.Timer tLoad0 = new System.Timers.Timer { Interval = 200 };
+            tLoad0.Elapsed += (s, en) =>
+            {
+                this.Invoke(new Action(() =>
+                {
+                    TimeSpan tdiff = DateTime.Now.Subtract(lastCapture);
+                    if (tdiff > new TimeSpan(0, 0, 0, 2))
+                        winDeskImg = GetDesktopImage();
+                }));
+                tLoad0.Stop(); // Stop the timer(otherwise keeps on calling)
+            };
+            tLoad0.Start();
         }
 
         private void OnLocationChanged(object sender, EventArgs e)
@@ -86,6 +97,6 @@ namespace TransparentForms
             if (!locChangedOff)
                 SetTransBG();
         }
-
+    
     }
 }
