@@ -15,9 +15,18 @@ namespace TransparentForms
     public partial class TForm : Form
     {
         protected Image winDeskImg = null;
+        volatile int speachCnt = 0;
         volatile bool locChangedOff = false;
         object spinLock = new object();
         DateTime lastCapture = DateTime.Now;
+        DateTime lastSay = DateTime.Now;
+
+        string[] setences = {"Twenty", "Atou Marriage Fourty", "close down", "last beat winner", "Thank you and enough",
+            "I change with Jack", "Last but not least", "Hey Mister", "Hey misses"};
+
+        string[] schnapserlm = { "Und Zwanzig", "Vierzig", "Danke und genug hab I", "I drah zua", "Habeas tibi",
+            "Tausch gegen den Buam aus", "Letzter fertzter", "Na oida" };
+
 
         public TForm()
         {
@@ -58,6 +67,17 @@ namespace TransparentForms
             }
         }
 
+        public void RotateSay()
+        {
+            spinLock = new object();
+            lock (spinLock)
+            {
+                if (++speachCnt >= setences.Length)
+                    speachCnt = 0;
+                lastSay = DateTime.Now;
+            }
+            SaySpeach.Say(setences[speachCnt]);
+        }
 
         public Image GetDesktopImage()
         {
@@ -89,17 +109,7 @@ namespace TransparentForms
         {
             if (!locChangedOff)
                 SetTransBG();
-            OnLeave(sender, e);
-        }
 
-        private void OnLocationChanged(object sender, EventArgs e)
-        {            
-            if (!locChangedOff)
-                SetTransBG();
-        }
-
-        private void OnLeave(object sender, EventArgs e)
-        {
             System.Timers.Timer tLoad0 = new System.Timers.Timer { Interval = 200 };
             tLoad0.Elapsed += (s, en) =>
             {
@@ -109,12 +119,39 @@ namespace TransparentForms
                     if (tdiff > new TimeSpan(0, 0, 0, 2))
                     {
                         winDeskImg = GetDesktopImage();
-                        SetTransBG();
                     }
+
                 }));
                 tLoad0.Stop(); // Stop the timer(otherwise keeps on calling)
             };
             tLoad0.Start();
+
+            System.Timers.Timer tSay = new System.Timers.Timer { Interval = 1200 };
+            tSay.Elapsed += (s, en) =>
+            {
+                this.Invoke(new Action(() =>
+                {
+                    TimeSpan tdiff = DateTime.Now.Subtract(lastSay);
+                    if (tdiff > new TimeSpan(0, 0, 0, 6))
+                    {
+                        RotateSay();
+                    }
+
+                }));
+                tSay.Stop(); // Stop the timer(otherwise keeps on calling)
+            };
+            tSay.Start();
+        }
+
+        private void OnLocationChanged(object sender, EventArgs e)
+        {            
+            if (!locChangedOff)
+                SetTransBG();                        
+        }
+
+        private void OnLeave(object sender, EventArgs e)
+        {
+            
         }
 
     }

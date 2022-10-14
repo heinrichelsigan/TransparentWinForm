@@ -6,9 +6,11 @@ namespace TransparentWinForm.TWinFormCore
     public partial class TWinForm : Form
     {
         protected Image? winDeskImg = null;
+        int speachCnt = 0;
         volatile bool locChangedOff = false;
         object spinLock = new object();
         DateTime lastCapture = DateTime.Now;
+        
 
         public TWinForm()
         {
@@ -50,7 +52,6 @@ namespace TransparentWinForm.TWinFormCore
             }
         }
 
-
         public Image GetDesktopImage()
         {
             locChangedOff = true;
@@ -67,6 +68,8 @@ namespace TransparentWinForm.TWinFormCore
             }
             return winDesktopImg;
         }
+
+       
 
         private void OnLoad(object sender, EventArgs e)
         {
@@ -87,11 +90,15 @@ namespace TransparentWinForm.TWinFormCore
                 {
                     TimeSpan tdiff = DateTime.Now.Subtract(lastCapture);
                     if (tdiff > new TimeSpan(0, 0, 0, 2))
+                    {
                         winDeskImg = GetDesktopImage();
+                    }
+                        
                 }));
                 tLoad0.Stop(); // Stop the timer(otherwise keeps on calling)
             };
             tLoad0.Start();
+
         }
 
         private void OnLocationChanged(object sender, EventArgs e)
