@@ -20,6 +20,9 @@ namespace WinCRoach
         object spinLock = new object();
         DateTime lastCapture = DateTime.Now;
         DateTime lastSay = DateTime.Now;
+        CRoach cRoach;
+        int scrX = -1;
+        int scrY = -1;
 
         string[] setences = {"Twenty", "Atou Marriage Fourty", "close down", "last beat winner", "Thank you and enough",
             "I change with Jack", "Last but not least", "Hey Mister", "Hey misses"};
@@ -33,16 +36,21 @@ namespace WinCRoach
             InitializeComponent();
         }
 
-
-        public void SetTransBG()
+        public Image GetDesktopImage()
         {
-            if (winDeskImg == null)
-                winDeskImg = GetDesktopImage();
+            locChangedOff = true;
+            spinLock = new object();
 
-            Graphics g = Graphics.FromImage(winDeskImg);
-            Form f = this.FindForm();
-            Image bgImg = Crop(winDeskImg, DesktopBounds.Size.Width, DesktopBounds.Size.Height, f.DesktopBounds.Location.X + 8, f.DesktopBounds.Location.Y + 32);
-            this.BackgroundImage = bgImg;
+            Image winDesktopImg;
+            lock (spinLock)
+            {
+                this.WindowState = FormWindowState.Minimized;
+                ScreenCapture sc = new ScreenCapture();
+                winDesktopImg = sc.CaptureScreen();
+                lastCapture = DateTime.Now;
+                locChangedOff = false;
+            }
+            return winDesktopImg;
         }
 
         public Image Crop(Image image, int width, int height, int x, int y)
@@ -67,6 +75,12 @@ namespace WinCRoach
             }
         }
 
+        public void PersistDesktopImage()
+        {
+            winDeskImg = GetDesktopImage();
+            System.AppDomain.CurrentDomain.SetData("DesktopImage", winDeskImg);
+        }
+
         public void RotateSay()
         {
             spinLock = new object();
@@ -79,79 +93,57 @@ namespace WinCRoach
             SaySpeach.Say(setences[speachCnt]);
         }
 
-        public Image GetDesktopImage()
-        {
-            locChangedOff = true;
-            spinLock = new object();
-            
-            Image winDesktopImg;
-            lock (spinLock)
-            {
-                this.WindowState = FormWindowState.Minimized;
-                ScreenCapture sc = new ScreenCapture();
-                winDesktopImg = sc.CaptureScreen();
-                this.WindowState = FormWindowState.Normal;
-                lastCapture = DateTime.Now;
-                locChangedOff = false;
-            }
-            return winDesktopImg;
-        }
-
         private void OnLoad(object sender, EventArgs e)
         {
             if (this.winDeskImg == null)
-                SetTransBG();
-            ScreenCapture sc = new ScreenCapture();
-            sc.CaptureScreenAndAllWindowsToDirectory(Application.UserAppDataPath, ImageFormat.Png);            
-        }
+            {
+                PersistDesktopImage();
+            }
 
-        private void OnResizeEnd(object sender, EventArgs e)
-        {
-            if (!locChangedOff)
-                SetTransBG();
-
-            System.Timers.Timer tLoad0 = new System.Timers.Timer { Interval = 200 };
+            cRoach = new CRoach();
+            cRoach.ShowDialog();
+                        
+            System.Timers.Timer tLoad0 = new System.Timers.Timer { Interval = 250 };
             tLoad0.Elapsed += (s, en) =>
             {
                 this.Invoke(new Action(() =>
                 {
-                    TimeSpan tdiff = DateTime.Now.Subtract(lastCapture);
-                    if (tdiff > new TimeSpan(0, 0, 0, 2))
-                    {
-                        winDeskImg = GetDesktopImage();
-                    }
-
+                    PollDesktopImage();
                 }));
                 tLoad0.Stop(); // Stop the timer(otherwise keeps on calling)
             };
-            tLoad0.Start();
-
-            System.Timers.Timer tSay = new System.Timers.Timer { Interval = 1200 };
-            tSay.Elapsed += (s, en) =>
-            {
-                this.Invoke(new Action(() =>
-                {
-                    TimeSpan tdiff = DateTime.Now.Subtract(lastSay);
-                    if (tdiff > new TimeSpan(0, 0, 0, 6))
-                    {
-                        RotateSay();
-                    }
-
-                }));
-                tSay.Stop(); // Stop the timer(otherwise keeps on calling)
-            };
-            tSay.Start();
+            tLoad0.Start();           
         }
 
-        private void OnLocationChanged(object sender, EventArgs e)
-        {            
-            if (!locChangedOff)
-                SetTransBG();                        
-        }
-
-        private void OnLeave(object sender, EventArgs e)
+        private void PollDesktopImage()
         {
+            while(true)
+            {
+                PersistDesktopImage();
+                RoachMove();                
+                System.Threading.Thread.Sleep(1500);
+            }
+        }
+
+        private void RoachMove()
+        {
+            Form f = cRoach.FindForm();
+            scrX = f.DesktopBounds.Location.X - 2;
+            scrY = f.DesktopBounds.Location.Y - 2;
+            scrX = cRoach.DesktopLocation.X - 2;
+            scrY = cRoach.DesktopLocation.Y - 2;
+            if (scrX < 0)
+                scrX = winDeskImg.Width - 48;
+            if (scrY < 0)
+                scrY = winDeskImg.Height - 48;
+
+            cRoach.Location = new Point(scrX, scrY);
+            cRoach.SetDesktopLocation(scrX, scrY);
             
+            cRoach.SetRoachBG();
+            cRoach.BringToFront();
+            cRoach.Show();            
+            // System.Threading.Thread.Sleep(333);
         }
 
     }

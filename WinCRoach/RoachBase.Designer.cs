@@ -30,23 +30,22 @@ namespace WinCRoach
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RoachBase));
             this.SuspendLayout();
             // 
-            // TForm
+            // RoachBase
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(624, 441);
-            this.DoubleBuffered = true;
-            this.Icon = global::WinCRoach.Properties.Resources.TransparentFormsIcon;
-            this.Name = "TForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "TransparentStandardForm";
-            this.Load += new System.EventHandler(this.OnLoad);
-            this.ResizeEnd += new System.EventHandler(this.OnResizeEnd);
-            this.LocationChanged += new System.EventHandler(this.OnLocationChanged);
-            this.Enter += new System.EventHandler(this.OnLeave);
-            this.Leave += new System.EventHandler(this.OnLeave);
+            this.ClientSize = new System.Drawing.Size(16, 0);
+            this.ControlBox = false;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Icon = (System.Drawing.Icon)WinCRoach.Properties.Resources.WinCRoach;
+            this.MaximizeBox = false;
+            this.Name = "RoachBase";
+            this.Text = "WinCRoach";
+            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
+            this.Load += new System.EventHandler(this.OnLoad);            
             this.ResumeLayout(false);
 
         }

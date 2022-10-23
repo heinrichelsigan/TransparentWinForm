@@ -49,9 +49,9 @@
   <ItemGroup>
     <Compile Include="SaySpeach.cs" />
     <Compile Include="ScreenCapture.cs" />
-   <Compile Include="RoachBase.cs">
+    <Compile Include="RoachBase.cs">
       <SubType>Form</SubType>
-    </Compile>	
+    </Compile>
     <Compile Include="RoachBase.Designer.cs">
       <DependentUpon>RoachBase.cs</DependentUpon>
     </Compile>
@@ -60,7 +60,7 @@
     </Compile>
     <Compile Include="CRoach.Designer.cs">
       <DependentUpon>CRoach.cs</DependentUpon>
-    </Compile>	
+    </Compile>
     <Compile Include="TForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,6 +77,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -91,6 +92,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WinCRoach.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CRoach.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MRoach.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

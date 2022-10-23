@@ -20,29 +20,25 @@ namespace WinCRoach
         object spinLock = new object();
         DateTime lastCapture = DateTime.Now;
         DateTime lastSay = DateTime.Now;
-
-        string[] setences = {"Twenty", "Atou Marriage Fourty", "close down", "last beat winner", "Thank you and enough",
-            "I change with Jack", "Last but not least", "Hey Mister", "Hey misses"};
-
-        string[] schnapserlm = { "Und Zwanzig", "Vierzig", "Danke und genug hab I", "I drah zua", "Habeas tibi",
-            "Tausch gegen den Buam aus", "Letzter fertzter", "Na oida" };
-
+        int scrX = -1;
+        int scrY = -1;
 
         public CRoach()
         {
             InitializeComponent();
         }
 
-
-        public void SetTransBG()
+        public Image GetDesktopImage()
         {
-            if (winDeskImg == null)
-                winDeskImg = GetDesktopImage();
+            locChangedOff = true;
+            spinLock = new object();
 
-            Graphics g = Graphics.FromImage(winDeskImg);
-            Form f = this.FindForm();
-            Image bgImg = Crop(winDeskImg, DesktopBounds.Size.Width, DesktopBounds.Size.Height, f.DesktopBounds.Location.X + 8, f.DesktopBounds.Location.Y + 32);
-            this.BackgroundImage = bgImg;
+            Image winDesktopImg;
+            lock (spinLock)
+            {
+                winDesktopImg = (Image)System.AppDomain.CurrentDomain.GetData("DesktopImage");
+            }
+            return winDesktopImg;
         }
 
         public Image Crop(Image image, int width, int height, int x, int y)
@@ -67,91 +63,54 @@ namespace WinCRoach
             }
         }
 
-        public void RotateSay()
-        {
-            spinLock = new object();
-            lock (spinLock)
-            {
-                if (++speachCnt >= setences.Length)
-                    speachCnt = 0;
-                lastSay = DateTime.Now;
-            }
-            SaySpeach.Say(setences[speachCnt]);
+        public void SetRoachBG()
+        {            
+            winDeskImg = GetDesktopImage();
+            Graphics g = Graphics.FromImage(winDeskImg);
+            Form f = this.FindForm();
+            Image bgImg = Crop(winDeskImg, DesktopBounds.Size.Width, DesktopBounds.Size.Height, f.DesktopBounds.Location.X, f.DesktopBounds.Location.Y);
+            this.BackgroundImage = bgImg;
+            this.pictureBoxRoach.Image = WinCRoach.Properties.Resources.CRoach;
+            this.pictureBoxRoach.BackgroundImage = bgImg;
         }
 
-        public Image GetDesktopImage()
-        {
-            locChangedOff = true;
-            spinLock = new object();
-            
-            Image winDesktopImg;
-            lock (spinLock)
-            {
-                this.WindowState = FormWindowState.Minimized;
-                ScreenCapture sc = new ScreenCapture();
-                winDesktopImg = sc.CaptureScreen();
-                this.WindowState = FormWindowState.Normal;
-                lastCapture = DateTime.Now;
-                locChangedOff = false;
-            }
-            return winDesktopImg;
-        }
 
         private void OnLoad(object sender, EventArgs e)
-        {
-            if (this.winDeskImg == null)
-                SetTransBG();
-            ScreenCapture sc = new ScreenCapture();
-            sc.CaptureScreenAndAllWindowsToDirectory(Application.UserAppDataPath, ImageFormat.Png);            
-        }
+        {                        
+            SetRoachBG();
 
-        private void OnResizeEnd(object sender, EventArgs e)
-        {
-            if (!locChangedOff)
-                SetTransBG();
-
-            System.Timers.Timer tLoad0 = new System.Timers.Timer { Interval = 200 };
-            tLoad0.Elapsed += (s, en) =>
+            System.Timers.Timer tRoachMove = new System.Timers.Timer { Interval = 500 };
+            tRoachMove.Elapsed += (s, en) =>
             {
                 this.Invoke(new Action(() =>
                 {
-                    TimeSpan tdiff = DateTime.Now.Subtract(lastCapture);
-                    if (tdiff > new TimeSpan(0, 0, 0, 2))
-                    {
-                        winDeskImg = GetDesktopImage();
-                    }
-
+                    RoachMove();
                 }));
-                tLoad0.Stop(); // Stop the timer(otherwise keeps on calling)
+                tRoachMove.Stop(); // Stop the timer(otherwise keeps on calling)
             };
-            tLoad0.Start();
-
-            System.Timers.Timer tSay = new System.Timers.Timer { Interval = 1200 };
-            tSay.Elapsed += (s, en) =>
-            {
-                this.Invoke(new Action(() =>
-                {
-                    TimeSpan tdiff = DateTime.Now.Subtract(lastSay);
-                    if (tdiff > new TimeSpan(0, 0, 0, 6))
-                    {
-                        RotateSay();
-                    }
-
-                }));
-                tSay.Stop(); // Stop the timer(otherwise keeps on calling)
-            };
-            tSay.Start();
+            tRoachMove.Start();            
         }
 
-        private void OnLocationChanged(object sender, EventArgs e)
-        {            
-            if (!locChangedOff)
-                SetTransBG();                        
-        }
-
-        private void OnLeave(object sender, EventArgs e)
+        private void RoachMove()
         {
-            
+            while (true)
+            {
+                Form f = this.FindForm();
+                scrX = this.DesktopLocation.X - 2;  // f.DesktopBounds.Location.X - 2;
+                scrY = this.DesktopLocation.Y - 2; // f.DesktopBounds.Location.Y - 2;
+                if (scrX < 0)
+                    scrX = winDeskImg.Width - 48;
+                if (scrY < 0)
+                {
+                    scrY = winDeskImg.Height - 48;
+                    scrY = winDeskImg.Width - 48;
+                }
+
+                this.SetRoachBG();
+                this.Location = new Point(scrX, scrY);
+                this.SetDesktopLocation(scrX, scrY);                
+                System.Threading.Thread.Sleep(750);
+            }
         }
 
     }
