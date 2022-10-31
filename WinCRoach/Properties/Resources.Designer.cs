@@ -73,6 +73,26 @@ namespace WinCRoach.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CRoach0 {
+            get {
+                object obj = ResourceManager.GetObject("CRoach0", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CRoach1 {
+            get {
+                object obj = ResourceManager.GetObject("CRoach1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap MRoach {
             get {
                 object obj = ResourceManager.GetObject("MRoach", resourceCulture);
