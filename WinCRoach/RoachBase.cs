@@ -22,7 +22,7 @@ namespace WinCRoach
         object spinLockImage = new object(), spinLock = new object();
         DateTime lastCapture = DateTime.Now;
         DateTime lastSay = DateTime.Now;
-        CRoach cRoach, dRoach, eRoach;
+        CRoach cRoach, dRoach;
         int scrX = -1;
         int scrY = -1;
 
@@ -103,35 +103,42 @@ namespace WinCRoach
             }
 
             Point dPt = new Point((int)(winDeskImg.Width / 3), (int)((winDeskImg.Height) / 3));
-            startRoach();
-
-            System.Timers.Timer tLoad0 = new System.Timers.Timer { Interval = 450 };
-            tLoad0.Elapsed += (s, en) =>
+            if (cRoach == null)
             {
-                this.Invoke(new Action(() =>
-                {
-                    //if (dRoach == null)
-                    //{
-                    //    dRoach = new CRoach() { Location = dPt };
-                    //    dRoach.SetDesktopLocation(dPt.X, dPt.Y);
-                    //    dRoach.SelfMoveRoach(400);
-                    //    dRoach.Show();
-                    //    // dRoach.SetDesktopLocation(dPt.X, dPt.Y);                    
-                    //}
-                    if (eRoach == null)
-                    {
-                        Point ePt = new Point(dPt.X + 128, dPt.Y + 126);
-                        eRoach = new CRoach() { Location = ePt };
-                        // eRoach.SetDesktopLocation(ePt.X, ePt.Y);
-                        eRoach.SelfMoveRoach(200);
-                        eRoach.Show();
-                        eRoach.SetDesktopLocation(ePt.X, ePt.Y);
-                    }
+                cRoach = new CRoach();
+                // dRoach.SelfMoveRoach(400);
+                cRoach.Show();
+                // dRoach.SetDesktopLocation(dPt.X, dPt.Y);                    
+            }
 
-                }));
-                tLoad0.Stop(); // Stop the timer(otherwise keeps on calling)
-            };
+            // startRoach();
 
+            //System.Timers.Timer tLoad0 = new System.Timers.Timer { Interval = 450 };
+            //tLoad0.Elapsed += (s, en) =>
+            //{
+            //    this.Invoke(new Action(() =>
+            //    {
+            //        if (dRoach == null)
+            //        {
+            //            dRoach = new CRoach();
+            //            // dRoach.SelfMoveRoach(400);
+            //            dRoach.ShowDialog();
+            //            // dRoach.SetDesktopLocation(dPt.X, dPt.Y);                    
+            //        }
+            //        //if (eRoach == null)
+            //        //{
+            //        //    Point ePt = new Point(dPt.X + 128, dPt.Y + 126);
+            //        //    eRoach = new CRoach() { Location = ePt };
+            //        //    // eRoach.SetDesktopLocation(ePt.X, ePt.Y);
+            //        //    eRoach.SelfMoveRoach(200);
+            //        //    eRoach.Show();
+            //        //    eRoach.SetDesktopLocation(ePt.X, ePt.Y);
+            //        //}
+
+            //    }));
+            //    tLoad0.Stop(); // Stop the timer(otherwise keeps on calling)
+            //};
+            //tLoad0.Start();
 
 
             //System.Timers.Timer tLoad3 = new System.Timers.Timer { Interval = 750 };
@@ -175,7 +182,7 @@ namespace WinCRoach
             {
                 // PersistDesktopImage();
                 RoachMove();                
-                System.Threading.Thread.Sleep(200);
+                System.Threading.Thread.Sleep(250);
             }
         }
 
