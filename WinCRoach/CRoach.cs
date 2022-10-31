@@ -113,7 +113,7 @@ namespace WinCRoach
         private void OnLoad(object sender, EventArgs e)
         {
             // SetRoachBG(this.Location);
-            SelfMoveRoach(10);            
+            // SelfMoveRoach(10);            
         }
 
         public void SelfMoveRoach(int interval = 0)
